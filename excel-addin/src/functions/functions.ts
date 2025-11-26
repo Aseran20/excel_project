@@ -7,6 +7,8 @@
  * @param options Additional options (key=value;...).
  * @returns The JSON response from the backend.
  */
+declare const CustomFunctions: any;
+
 export async function ALGOSHEET(
     prompt: string,
     responseMode: string = "free",
@@ -38,8 +40,10 @@ export async function ALGOSHEET(
         }
 
         const json = await response.json();
+        console.log("ALGOSHEET response:", json);
         return JSON.stringify(json);
     } catch (error: any) {
+        console.error("ALGOSHEET error:", error);
         return `ALGOSHEET_ERROR: ${error.message}`;
     }
 }
@@ -78,6 +82,11 @@ export function ALGOSHEET_PARSE(jsonText: string, field: string): any {
                 return "#FIELD_NOT_FOUND";
         }
     } catch (e) {
+        console.error("ALGOSHEET_PARSE error:", e);
         return "#PARSE_ERROR";
     }
 }
+
+// Associate the functions with their IDs
+CustomFunctions.associate("ALGOSHEET", ALGOSHEET);
+CustomFunctions.associate("ALGOSHEET_PARSE", ALGOSHEET_PARSE);

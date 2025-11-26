@@ -1,17 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import { ParsedOptions, AlgoSheetResponse } from "../types/algosheet";
 
-const API_KEY_RAW = process.env.GEMINI_API_KEY;
-const API_KEY = API_KEY_RAW ? API_KEY_RAW.trim() : "";
-
-if (!API_KEY) {
-    console.warn("WARNING: GEMINI_API_KEY is not set in environment variables.");
-} else {
-    const fingerprint = `${API_KEY.slice(0, 4)}...${API_KEY.slice(-4)}`;
-    console.log(`[Gemini] Using API key length: ${API_KEY.length}${API_KEY_RAW && API_KEY_RAW !== API_KEY ? " (trimmed)" : ""}, fingerprint: ${fingerprint}`);
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY || "" });
+// Remove top-level initialization
+// const ai = new GoogleGenAI({ apiKey: API_KEY || "" });
 
 export async function callGemini(
     prompt: string,
@@ -19,6 +10,15 @@ export async function callGemini(
     schemaStr: string | undefined | null,
     options: ParsedOptions
 ): Promise<AlgoSheetResponse> {
+    const API_KEY_RAW = process.env.GEMINI_API_KEY;
+    const API_KEY = API_KEY_RAW ? API_KEY_RAW.trim() : "";
+
+    if (!API_KEY) {
+        console.warn("WARNING: GEMINI_API_KEY is not set in environment variables.");
+        throw new Error("GEMINI_API_KEY is not set.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: API_KEY });
 
     const modelId = "gemini-3-pro-preview";
 
