@@ -1,0 +1,65 @@
+{
+    "functions": [
+        {
+            "id": "ALGOSHEET",
+            "name": "ALGOSHEET",
+            "description": "Calls the AlgoSheet backend.",
+            "parameters": [
+                {
+                    "name": "prompt",
+                    "description": "The prompt for the AI.",
+                    "type": "string",
+                    "dimensionality": "scalar"
+                },
+                {
+                    "name": "responseMode",
+                    "description": "The response mode (\"free\" or \"structured\").",
+                    "type": "string",
+                    "dimensionality": "scalar",
+                    "optional": true
+                },
+                {
+                    "name": "schema",
+                    "description": "The schema for structured response.",
+                    "type": "string",
+                    "dimensionality": "scalar",
+                    "optional": true
+                },
+                {
+                    "name": "options",
+                    "description": "Additional options (key=value;...).",
+                    "type": "string",
+                    "dimensionality": "scalar",
+                    "optional": true
+                }
+            ],
+            "result": {
+                "type": "string",
+                "dimensionality": "scalar"
+            }
+        },
+        {
+            "id": "ALGOSHEET_PARSE",
+            "name": "ALGOSHEET_PARSE",
+            "description": "Parses the JSON result from ALGOSHEET.",
+            "parameters": [
+                {
+                    "name": "jsonText",
+                    "description": "The JSON text returned by ALGOSHEET.",
+                    "type": "string",
+                    "dimensionality": "scalar"
+                },
+                {
+                    "name": "field",
+                    "description": "The field to extract.",
+                    "type": "string",
+                    "dimensionality": "scalar"
+                }
+            ],
+            "result": {
+                "type": "any",
+                "dimensionality": "scalar"
+            }
+        }
+    ]
+}

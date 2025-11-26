@@ -1,0 +1,22 @@
+{
+    "name": "algosheet-backend",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "dev": "ts-node-dev src/index.ts"
+    },
+    "dependencies": {
+        "@fastify/cors": "^8.5.0",
+        "@google/genai": "^0.3.0",
+        "dotenv": "^16.4.0",
+        "fastify": "^4.26.0",
+        "node-fetch": "^2.7.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "ts-node-dev": "^2.0.0",
+        "typescript": "^5.0.0"
+    }
+}
