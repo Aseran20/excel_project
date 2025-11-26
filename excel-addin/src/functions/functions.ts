@@ -18,7 +18,7 @@ export async function ALGOSHEET(
     // Backend URL with simple override hook if needed later
     const backendUrl =
         (typeof window !== "undefined" && (window as any).ALGOSHEET_BACKEND_URL) ||
-        "http://localhost:3100/algosheet";
+        "https://api.auraia.ch/algosheet";
 
     try {
         const response = await fetch(backendUrl, {

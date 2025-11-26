@@ -7,7 +7,7 @@ const App = () => {
     const testBackend = async () => {
         setStatus("Testing backend...");
         try {
-            const res = await fetch("https://localhost:3100/algosheet", {
+            const res = await fetch("https://api.auraia.ch/algosheet", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: "Test from Taskpane", responseMode: "free" })
