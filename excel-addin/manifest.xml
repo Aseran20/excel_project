@@ -10,7 +10,7 @@
     <Host Name="Workbook"/>
   </Hosts>
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://algosheet.auraia.ch/taskpane.html"/>
+    <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides/1.0" xsi:type="VersionOverridesV1_0">
@@ -21,13 +21,16 @@
     </Requirements>
     <Hosts>
       <Host xsi:type="Workbook">
+        <Runtimes>
+          <Runtime resid="Taskpane.Url" lifetime="long" />
+        </Runtimes>
         <AllFormFactors>
           <ExtensionPoint xsi:type="CustomFunctions">
             <Script>
               <SourceLocation Resid="Functions.Script.Url"/>
             </Script>
             <Page>
-              <SourceLocation Resid="Functions.Page.Url"/>
+              <SourceLocation Resid="Taskpane.Url"/>
             </Page>
             <Metadata>
               <SourceLocation Resid="Functions.Metadata.Url"/>
@@ -38,9 +41,10 @@
     </Hosts>
     <Resources>
       <bt:Urls>
-        <bt:Url id="Functions.Script.Url" DefaultValue="https://algosheet.auraia.ch/functions.js"/>
-        <bt:Url id="Functions.Page.Url" DefaultValue="https://algosheet.auraia.ch/functions.html"/>
-        <bt:Url id="Functions.Metadata.Url" DefaultValue="https://algosheet.auraia.ch/functions.json"/>
+        <bt:Url id="Functions.Script.Url" DefaultValue="https://localhost:3000/functions.js"/>
+        <bt:Url id="Functions.Page.Url" DefaultValue="https://localhost:3000/functions.html"/>
+        <bt:Url id="Functions.Metadata.Url" DefaultValue="https://localhost:3000/functions.json"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
       </bt:Urls>
     </Resources>
   </VersionOverrides>

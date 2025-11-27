@@ -15,10 +15,8 @@ export async function ALGOSHEET(
     schema: string = "",
     options: string = ""
 ): Promise<string> {
-    // Backend URL with simple override hook if needed later
-    const backendUrl =
-        (typeof window !== "undefined" && (window as any).ALGOSHEET_BACKEND_URL) ||
-        "https://api.auraia.ch/algosheet";
+    // Backend URL injected by Webpack
+    const backendUrl = process.env.BACKEND_URL || "https://api.auraia.ch/algosheet";
 
     try {
         const response = await fetch(backendUrl, {

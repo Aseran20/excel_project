@@ -42,7 +42,7 @@ module.exports = async (env, options) => {
             new HtmlWebpackPlugin({
                 filename: "taskpane.html",
                 template: "./src/taskpane/taskpane.html",
-                chunks: ["taskpane"],
+                chunks: ["taskpane", "functions"],
             }),
             new CopyWebpackPlugin({
                 patterns: [
@@ -61,11 +61,14 @@ module.exports = async (env, options) => {
                             if (dev) {
                                 return content;
                             } else {
-                                return content.toString().replace(new RegExp("https://localhost:3000", "g"), "https://your-production-url");
+                                return content.toString().replace(new RegExp("https://localhost:3000", "g"), "https://algosheet.auraia.ch");
                             }
                         },
                     },
                 ],
+            }),
+            new webpack.DefinePlugin({
+                "process.env.BACKEND_URL": JSON.stringify(dev ? "https://localhost:3100/algosheet" : "https://api.auraia.ch/algosheet"),
             }),
         ],
         devServer: {

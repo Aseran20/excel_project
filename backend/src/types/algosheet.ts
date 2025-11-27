@@ -13,6 +13,7 @@ export interface AlgoSheetRequest {
 
 export interface AlgoSheetResponse {
     value: string | number | null;
+    reasoning?: string | null;
     confidence?: number | null;
     sources?: {
         url: string;

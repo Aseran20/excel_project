@@ -1,0 +1,234 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AlgoSheet</title>
+
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+    <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
+    <link rel="stylesheet"
+        href="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/office-ui-fabric-core/11.1.0/css/fabric.min.css" />
+
+    <!-- Template styles -->
+    <link href="taskpane.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="ms-font-m ms-Fabric">
+    <section id="sideload-msg" class="sideload-msg">
+        <h2 class="ms-font-xl">Please <a target="_blank"
+                href="https://learn.microsoft.com/office/dev/add-ins/testing/test-debug-office-add-ins#sideload-an-office-add-in-for-testing">sideload</a>
+            your add-in to see app body.</h2>
+    </section>
+
+    <main id="app-body" style="display: none; width: 100%;">
+        <!-- Tabs -->
+        <div class="tabs">
+            <button id="tab-inspector" class="tab-button active">🔍 Inspector</button>
+            <button id="tab-examples" class="tab-button">📚 Examples</button>
+            <button id="tab-docs" class="tab-button">📖 Docs</button>
+            <button id="tab-debug" class="tab-button">🔧 Debug</button>
+        </div>
+
+        <!-- Inspector Tab -->
+        <div id="content-inspector" class="tab-content active">
+            <div class="inspector-content">
+                <div id="inspector-empty" class="inspector-state">
+                    <p class="ms-font-m">📌 Select a cell with ALGOSHEET data to inspect</p>
+                    <p class="ms-font-xs">(Works with formulas or pasted values)</p>
+                </div>
+
+                <div id="inspector-loading" class="inspector-state" style="display:none;">
+                    <p class="ms-font-m">⏳ Analyzing cell...</p>
+                </div>
+
+                <div id="inspector-error" class="inspector-state" style="display:none;">
+                    <p class="ms-font-m-red">⚠️ Not an ALGOSHEET result</p>
+                    <button id="btn-parse-manual" class="ms-Button">📋 Try Parse as JSON</button>
+                </div>
+
+                <div id="inspector-data" style="display:none;">
+                    <div class="inspector-section">
+                        <h3 class="ms-font-l">📊 Results</h3>
+                        <div id="inspector-results" class="inspector-results"></div>
+                    </div>
+
+                    <div class="inspector-section" id="inspector-reasoning-section" style="display:none;">
+                        <h3 class="ms-font-l">💭 Reasoning</h3>
+                        <p id="inspector-reasoning" class="inspector-text"></p>
+                    </div>
+
+                    <div class="inspector-section" id="inspector-sources-section" style="display:none;">
+                        <h3 class="ms-font-l">🔗 Sources</h3>
+                        <div id="inspector-sources"></div>
+                    </div>
+                </div>
+
+                <div id="inspector-requests" class="inspector-section" style="display:none;">
+                    <h3 class="ms-font-l">⏳ Pending Requests</h3>
+                    <div id="requests-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examples Tab -->
+        <div id="content-examples" class="tab-content">
+            <div class="guide-content">
+                <h2 class="ms-font-xl">Use Cases</h2>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">💡 Simple Question</h4>
+                    <code>=ALGOSHEET("What is the capital of France?")</code>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">🔢 Get a Number</h4>
+                    <code>=ALGOSHEET("Revenue of Microsoft 2023", "structured", "number")</code>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">🌐 Web Search</h4>
+                    <code>=ALGOSHEET("Latest AI news", "free", "", "web=true")</code>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">📊 M&A Analysis</h4>
+                    <code>=ALGOSHEET("P/E ratio of Tesla", "structured", "number", "web=true")</code>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">💰 Company Valuation</h4>
+                    <code>=ALGOSHEET("Market cap of " & A1, "structured", "number", "web=true")</code>
+                    <p class="ms-font-xs">Get real-time company valuation</p>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">📈 Financial Ratios</h4>
+                    <code>=ALGOSHEET("P/E ratio of " & A1, "structured", "number", "web=true")</code>
+                    <p class="ms-font-xs">Extract key financial metrics</p>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">🎯 Sector Analysis</h4>
+                    <code>=ALGOSHEET("Industry sector of " & A1, "structured", "enum(Tech,Finance,Healthcare,Other)")</code>
+                    <p class="ms-font-xs">Classify companies by sector</p>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">⚠️ Risk Assessment</h4>
+                    <code>=ALGOSHEET("List 3 risks of acquiring " & A1, "free", "", "web=true")</code>
+                    <p class="ms-font-xs">Due diligence insights</p>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">🔍 Extract Answer</h4>
+                    <code>=ALGOSHEET_PARSE(B1, "value")</code>
+                    <p class="ms-font-xs">Get clean value from JSON</p>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">🌐 Get Sources</h4>
+                    <code>=ALGOSHEET_PARSE(B1, "sources_urls")</code>
+                    <p class="ms-font-xs">Extract source URLs</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Docs Tab -->
+        <div id="content-docs" class="tab-content">
+            <div class="guide-content">
+                <h2 class="ms-font-xl">Reference</h2>
+
+                <h3 class="ms-font-l">ALGOSHEET Function</h3>
+                <div class="example">
+                    <code>=ALGOSHEET(prompt, [mode], [schema], [options])</code>
+                </div>
+
+                <table class="params-table">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Required</th>
+                        <th>Values</th>
+                    </tr>
+                    <tr>
+                        <td><code>prompt</code></td>
+                        <td>✅ Yes</td>
+                        <td>Any text question</td>
+                    </tr>
+                    <tr>
+                        <td><code>mode</code></td>
+                        <td>❌ No</td>
+                        <td>"free" (default), "structured"</td>
+                    </tr>
+                    <tr>
+                        <td><code>schema</code></td>
+                        <td>❌ No</td>
+                        <td>"number", "text", "enum(A,B,C)"</td>
+                    </tr>
+                    <tr>
+                        <td><code>options</code></td>
+                        <td>❌ No</td>
+                        <td>"web=true", "lang=French"</td>
+                    </tr>
+                </table>
+
+                <h3 class="ms-font-l">ALGOSHEET_PARSE Function</h3>
+                <div class="example">
+                    <code>=ALGOSHEET_PARSE(jsonText, field)</code>
+                    <p class="ms-font-s">Extract specific fields from ALGOSHEET results</p>
+                </div>
+
+                <h4 class="ms-font-m">Available Fields</h4>
+                <ul class="field-list">
+                    <li><code>value</code> - Main answer</li>
+                    <li><code>confidence</code> - Confidence (0-1)</li>
+                    <li><code>sources_urls</code> - URLs (separated by ;)</li>
+                    <li><code>sources_titles</code> - Titles (separated by ;)</li>
+                    <li><code>sources_snippets</code> - Snippets (separated by |)</li>
+                    <li><code>raw</code> - Full JSON</li>
+                </ul>
+
+                <h3 class="ms-font-l">Options</h3>
+                <ul class="field-list">
+                    <li><code>web=true</code> - Enable web search with sources</li>
+                    <li><code>lang=French</code> - Response in French (or any language)</li>
+                </ul>
+
+                <div class="help-box">
+                    <p class="ms-font-s"><strong>📄 Full Documentation</strong></p>
+                    <p class="ms-font-xs">See: <code>data/AlgoSheet_User_Guide.md</code></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Tab -->
+        <div id="content-debug" class="tab-content">
+            <div class="debug-content">
+                <h2 class="ms-font-xl">Debug Tools</h2>
+                <p class="ms-font-m">Status: <span id="status">Ready</span></p>
+
+                <div class="button-group">
+                    <button id="test-backend" class="ms-Button ms-Button--primary">
+                        <span class="ms-Button-label">Test Backend</span>
+                    </button>
+                    <button id="check-functions" class="ms-Button">
+                        <span class="ms-Button-label">Check Functions</span>
+                    </button>
+                </div>
+
+                <pre id="response" class="response-box"></pre>
+
+                <hr />
+                <p class="ms-font-s"><em>If functions show #NAME?, try reloading the add-in or clearing cache.</em></p>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

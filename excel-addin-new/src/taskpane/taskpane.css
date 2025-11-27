@@ -1,0 +1,399 @@
+/* 
+ * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
+ * See LICENSE in the project root for license information.
+ */
+
+html,
+body {
+   width: 100%;
+   height: 100%;
+   margin: 0;
+   padding: 0;
+   overflow-x: hidden;
+}
+
+ul {
+   margin: 0;
+   padding: 0;
+}
+
+.sideload-msg {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   padding: 20px;
+   text-align: center;
+}
+
+#app-body {
+   display: flex;
+   flex-direction: column;
+   height: 100vh;
+   overflow: hidden;
+}
+
+/* Tabs */
+.tabs {
+   display: flex;
+   border-bottom: 1px solid #edebe9;
+   background: #fff;
+   flex-shrink: 0;
+}
+
+.app-title {
+   font-size: 13px;
+   font-weight: 600;
+   color: #0078d4;
+   padding: 0 12px;
+   margin-right: auto;
+}
+
+.tab-button {
+   flex: 1;
+   padding: 10px;
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-size: 12px;
+   color: #605e5c;
+   border-bottom: 2px solid transparent;
+}
+
+.tab-button.active {
+   color: #0078d4;
+   border-bottom-color: #0078d4;
+   font-weight: 600;
+}
+
+.tab-button:hover {
+   background: #f3f2f1;
+}
+
+/* Inspector Styles */
+.inspector-content {
+   padding: 8px;
+}
+
+.inspector-state {
+   text-align: center;
+   padding: 16px 8px;
+   color: #605e5c;
+}
+
+.inspector-section {
+   margin-bottom: 12px;
+   padding: 8px;
+   background: #f3f2f1;
+   border-radius: 4px;
+}
+
+.inspector-section h3 {
+   margin: 0 0 8px 0;
+   font-size: 13px;
+   color: #323130;
+}
+
+.inspector-results {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+}
+
+.result-item {
+   padding: 8px;
+   background: white;
+   border-radius: 4px;
+   font-size: 13px;
+}
+
+.result-item strong {
+   color: #0078d4;
+   margin-right: 8px;
+}
+
+.inspector-text {
+   font-size: 13px;
+   line-height: 1.5;
+   color: #323130;
+   background: white;
+   padding: 8px;
+   border-radius: 4px;
+   white-space: pre-wrap;
+}
+
+.source-item {
+   padding: 6px 8px;
+   background: white;
+   border-radius: 4px;
+   margin-bottom: 6px;
+}
+
+.source-item a {
+   color: #0078d4;
+   text-decoration: none;
+   font-size: 13px;
+}
+
+.source-item a:hover {
+   text-decoration: underline;
+}
+
+.ms-Button {
+   padding: 8px 16px;
+   background: #0078d4;
+   color: white;
+   border: none;
+   border-radius: 2px;
+   cursor: pointer;
+   font-size: 13px;
+}
+
+.ms-Button:hover {
+   background: #106ebe;
+}
+
+.tab-button {
+   flex: 1;
+   padding: 10px 14px;
+   border: none;
+   background: transparent;
+   cursor: pointer;
+   font-size: 13px;
+   color: #605e5c;
+   transition: all 0.2s;
+   border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+   background: #f3f2f1;
+}
+
+.tab-button.active {
+   color: #0078d4;
+   border-bottom: 2px solid #0078d4;
+   background: #fff;
+}
+
+/* Tab Content */
+.tab-content {
+   display: none;
+   padding: 16px;
+   overflow-y: auto;
+   flex: 1;
+   animation: fadeIn 0.3s;
+}
+
+.tab-content.active {
+   display: block;
+}
+
+@keyframes fadeIn {
+   from {
+      opacity: 0;
+   }
+
+   to {
+      opacity: 1;
+   }
+}
+
+/* Guide Content */
+.guide-content h2 {
+   color: #0078d4;
+   margin-top: 0;
+   margin-bottom: 12px;
+   font-size: 18px;
+}
+
+.guide-content h3 {
+   color: #323130;
+   margin-top: 16px;
+   margin-bottom: 8px;
+   border-bottom: 1px solid #edebe9;
+   padding-bottom: 4px;
+   font-size: 15px;
+}
+
+.guide-content h4 {
+   color: #605e5c;
+   margin-top: 12px;
+   margin-bottom: 6px;
+}
+
+.example {
+   background: #f3f2f1;
+   padding: 12px;
+   border-radius: 4px;
+   margin-bottom: 12px;
+   border-left: 3px solid #0078d4;
+}
+
+.example code {
+   display: block;
+   background: #fff;
+   padding: 8px;
+   border-radius: 3px;
+   font-family: 'Consolas', 'Monaco', monospace;
+   font-size: 12px;
+   color: #0078d4;
+   margin-bottom: 8px;
+   word-wrap: break-word;
+}
+
+.example p {
+   margin: 0;
+   color: #605e5c;
+}
+
+.example-group {
+   margin-bottom: 16px;
+   padding: 10px;
+   background: #faf9f8;
+   border-radius: 4px;
+}
+
+.example-group code {
+   display: block;
+   background: #fff;
+   padding: 8px;
+   border-radius: 3px;
+   font-family: 'Consolas', 'Monaco', monospace;
+   font-size: 11px;
+   color: #0078d4;
+   margin-top: 6px;
+   word-wrap: break-word;
+}
+
+/* Table */
+.params-table {
+   width: 100%;
+   border-collapse: collapse;
+   margin: 15px 0;
+   font-size: 12px;
+}
+
+.params-table th {
+   background: #0078d4;
+   color: white;
+   padding: 8px;
+   text-align: left;
+   font-weight: 600;
+}
+
+.params-table td {
+   padding: 8px;
+   border-bottom: 1px solid #edebe9;
+}
+
+.params-table tr:hover {
+   background: #f3f2f1;
+}
+
+.params-table code {
+   background: #f3f2f1;
+   padding: 2px 6px;
+   border-radius: 3px;
+   font-family: 'Consolas', 'Monaco', monospace;
+   font-size: 11px;
+}
+
+/* Field List */
+.field-list {
+   list-style: none;
+   padding: 0;
+}
+
+.field-list li {
+   padding: 8px;
+   background: #faf9f8;
+   margin-bottom: 6px;
+   border-radius: 3px;
+   border-left: 3px solid #0078d4;
+}
+
+.field-list code {
+   background: #fff;
+   padding: 2px 6px;
+   border-radius: 3px;
+   font-family: 'Consolas', 'Monaco', monospace;
+   font-size: 11px;
+   color: #0078d4;
+   font-weight: 600;
+}
+
+/* Help Box */
+.help-box {
+   background: #fff4ce;
+   border: 1px solid #ffb900;
+   padding: 12px;
+   border-radius: 4px;
+   margin-top: 20px;
+}
+
+.help-box p {
+   margin: 0 0 6px 0;
+}
+
+.help-box code {
+   background: #fff;
+   padding: 2px 4px;
+   border-radius: 2px;
+   font-size: 11px;
+}
+
+/* Debug Content */
+.debug-content h2 {
+   color: #0078d4;
+   margin-top: 0;
+}
+
+.button-group {
+   display: flex;
+   gap: 10px;
+   margin: 15px 0;
+}
+
+.button-group button {
+   flex: 1;
+}
+
+.ms-Button {
+   padding: 10px 16px;
+   border: 1px solid #8a8886;
+   background: #fff;
+   cursor: pointer;
+   border-radius: 2px;
+   font-size: 14px;
+   transition: all 0.2s;
+}
+
+.ms-Button:hover {
+   background: #f3f2f1;
+}
+
+.ms-Button--primary {
+   background: #0078d4;
+   border-color: #0078d4;
+   color: white;
+}
+
+.ms-Button--primary:hover {
+   background: #106ebe;
+}
+
+.response-box {
+   background: #f3f2f1;
+   padding: 12px;
+   border-radius: 4px;
+   margin: 15px 0;
+   white-space: pre-wrap;
+   word-wrap: break-word;
+   font-family: 'Consolas', 'Monaco', monospace;
+   font-size: 11px;
+   max-height: 300px;
+   overflow-y: auto;
+}
+
+b {
+   font-weight: bold;
+}
