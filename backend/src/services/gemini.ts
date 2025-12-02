@@ -240,7 +240,7 @@ function buildResponseSchema(schemaStr: string | undefined | null): any {
         });
     } else {
         // Default: allow any type for free mode but enforce object structure
-        baseSchema.properties.value.type = ["string", "number", "boolean"];
+        baseSchema.properties.value.type = "string";
         baseSchema.properties.value.description = "The answer in any appropriate format";
     }
 
