@@ -80,14 +80,14 @@ module.exports = async (env, options) => {
               if (dev) {
                 return content;
               } else {
-                return content.toString().replace(urlDev, urlProd);
+                return content.toString().replace(new RegExp(urlDev, "g"), urlProd);
               }
             },
           },
         ],
       }),
       new webpack.DefinePlugin({
-        "process.env.BACKEND_URL": JSON.stringify(dev ? "https://localhost:3100/algosheet" : "https://api.auraia.ch/algosheet"),
+        "process.env.BACKEND_URL": JSON.stringify(dev ? "https://localhost:3100/algosheet" : "https://algosheet.auraia.ch/api/algosheet"),
       }),
     ],
     devServer: {

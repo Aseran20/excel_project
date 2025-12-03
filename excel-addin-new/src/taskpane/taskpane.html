@@ -169,15 +169,41 @@
                     <tr>
                         <td><code>schema</code></td>
                         <td>❌ No</td>
-                        <td>"number", "text", "enum(A,B,C)"</td>
+                        <td>"number", "boolean", "date", "enum(...)" or JSON schema</td>
                     </tr>
                     <tr>
                         <td><code>options</code></td>
                         <td>❌ No</td>
-                        <td>"web=true", "lang=French"</td>
+                        <td>JSON options e.g. <code>{"web_search": true}</code></td>
                     </tr>
                 </table>
 
+                <h3 class="ms-font-l">🚀 Advanced Features</h3>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">🌐 Force Web Search</h4>
+                    <p class="ms-font-xs">Get real-time data from the web.</p>
+                    <code>=ALGOSHEET("Latest stock price of MSFT", "free", "", "{""web_search"": true}")</code>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">📋 Structured Data</h4>
+                    <p class="ms-font-xs">Force the output to follow a specific format.</p>
+                    <code>=ALGOSHEET("Extract info", "structured", "{""type"": ""object"", ""properties"": {""name"": {""type"": ""string""}}}")</code>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">🧩 Multi-Field Extraction</h4>
+                    <p class="ms-font-xs">Extract multiple fields at once.</p>
+                    <code>=ALGOSHEET("Tesla info", "structured", "multi(revenue,ceo,sector)")</code>
+                </div>
+
+                <div class="example-group">
+                    <h4 class="ms-font-m">🧠 Reasoning & Debugging</h4>
+                    <p class="ms-font-xs">Open the <b>Inspector</b> tab to see the AI's reasoning and sources. Use the
+                        <b>Debug</b> tab to monitor API calls.
+                    </p>
+                </div>
                 <h3 class="ms-font-l">ALGOSHEET_PARSE Function</h3>
                 <div class="example">
                     <code>=ALGOSHEET_PARSE(jsonText, field)</code>
@@ -210,22 +236,32 @@
         <!-- Debug Tab -->
         <div id="content-debug" class="tab-content">
             <div class="debug-content">
-                <h2 class="ms-font-xl">Debug Tools</h2>
-                <p class="ms-font-m">Status: <span id="status">Ready</span></p>
+                <h2 class="ms-font-xl">🐛 Debug Console</h2>
 
-                <div class="button-group">
-                    <button id="test-backend" class="ms-Button ms-Button--primary">
-                        <span class="ms-Button-label">Test Backend</span>
-                    </button>
-                    <button id="check-functions" class="ms-Button">
-                        <span class="ms-Button-label">Check Functions</span>
-                    </button>
+                <!-- Live Console -->
+                <div class="debug-section">
+                    <div class="debug-header">
+                        <h3 class="ms-font-m">📝 Live Logs</h3>
+                        <button id="btn-clear-logs" class="ms-Button ms-Button--small">Clear</button>
+                    </div>
+                    <div id="live-console" class="debug-console"></div>
                 </div>
 
-                <pre id="response" class="response-box"></pre>
+                <!-- Request History -->
+                <div class="debug-section">
+                    <div class="debug-header">
+                        <h3 class="ms-font-m">📜 Request History (Last 10)</h3>
+                        <button id="btn-clear-history" class="ms-Button ms-Button--small">Clear</button>
+                    </div>
+                    <div id="request-history" class="request-history"></div>
+                </div>
 
-                <hr />
-                <p class="ms-font-s"><em>If functions show #NAME?, try reloading the add-in or clearing cache.</em></p>
+                <!-- Connection Test -->
+                <div class="debug-section">
+                    <h3 class="ms-font-m">🔌 Connection Test</h3>
+                    <button id="test-backend" class="ms-Button">Test Backend API</button>
+                    <div id="test-result" class="test-result"></div>
+                </div>
             </div>
         </div>
     </main>

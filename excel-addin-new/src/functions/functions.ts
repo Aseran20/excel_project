@@ -20,7 +20,17 @@ export async function ALGOSHEET(
 ): Promise<string> {
   // Backend URL injected by Webpack
   // @ts-ignore
-  const backendUrl = process.env.BACKEND_URL || "https://api.auraia.ch/algosheet";
+  const backendUrl = process.env.BACKEND_URL || "https://algosheet.auraia.ch/api/algosheet";
+
+  const startTime = Date.now();
+
+  // Try to log to debug panel if available
+  const debugLog = (window as any).debugLog;
+  const addRequestHistory = (window as any).addRequestHistory;
+
+  if (debugLog) {
+    debugLog(`ALGOSHEET called: "${prompt.substring(0, 40)}${prompt.length > 40 ? '...' : ''}"`, 'info');
+  }
 
   try {
     const response = await fetch(backendUrl, {
@@ -36,16 +46,65 @@ export async function ALGOSHEET(
       }),
     });
 
+    const duration = Date.now() - startTime;
+
     if (!response.ok) {
       const errorText = await response.text();
-      return `ALGOSHEET_ERROR: ${response.status} ${response.statusText} - ${errorText}`;
+      const errorMsg = `ALGOSHEET_ERROR: ${response.status} ${response.statusText} - ${errorText}`;
+
+      if (debugLog) debugLog(`Request failed: ${response.status}`, 'error');
+      if (addRequestHistory) {
+        addRequestHistory({
+          timestamp: new Date(),
+          prompt: prompt, // Full prompt
+          duration,
+          cached: false,
+          success: false,
+          error: `${response.status} ${response.statusText}`
+        });
+      }
+
+      return errorMsg;
     }
 
     const json = await response.json();
-    console.log("ALGOSHEET response:", json);
+    console.log("ALGOSHEET response (full):", JSON.stringify(json, null, 2));
+
+    // Detect if response was cached (very fast response = cache hit)
+    const wasCached = duration < 500;
+
+    if (debugLog) {
+      debugLog(`Request completed in ${duration}ms ${wasCached ? '(cached)' : ''}`, 'success');
+    }
+
+    if (addRequestHistory) {
+      addRequestHistory({
+        timestamp: new Date(),
+        prompt: prompt, // Full prompt
+        duration,
+        cached: wasCached,
+        success: true,
+        response: json // Pass full response
+      });
+    }
+
     return JSON.stringify(json);
   } catch (error: any) {
+    const duration = Date.now() - startTime;
     console.error("ALGOSHEET error:", error);
+
+    if (debugLog) debugLog(`Request error: ${error.message}`, 'error');
+    if (addRequestHistory) {
+      addRequestHistory({
+        timestamp: new Date(),
+        prompt: prompt, // Full prompt
+        duration,
+        cached: false,
+        success: false,
+        error: error.message
+      });
+    }
+
     return `ALGOSHEET_ERROR: ${error.message}`;
   }
 }
