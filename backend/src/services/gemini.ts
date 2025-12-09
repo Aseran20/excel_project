@@ -44,7 +44,7 @@ export async function callGemini(
     }
 
     const ai = new GoogleGenAI({ apiKey: API_KEY });
-    const modelId = "gemini-3-pro-preview";
+    const modelId = "gemini-2.5-flash";
 
     // Build the JSON schema for the response
     const responseSchema = buildResponseSchema(schemaStr);
