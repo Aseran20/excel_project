@@ -76,37 +76,76 @@ Be concise and accurate.`;
 
         const enhancedPrompt = `${webInstruction}${prompt}${typeInstruction}`;
 
+        // Build config based on web search usage
+        // gemini-2.5-flash limitation: cannot use tools + responseMimeType together
+        const config: any = options.web
+            ? {
+                // Web search mode: no responseMimeType, but enforce JSON via prompt
+                systemInstruction: systemInstruction +
+                    "\n\n=== CRITICAL OUTPUT FORMAT REQUIREMENT ===\n" +
+                    "You MUST respond with ONLY a raw JSON object. NO prose, NO explanation, NO markdown.\n" +
+                    "Start your response with { and end with }. Nothing before or after.\n" +
+                    "Example of CORRECT response: {\"value\":\"data\",\"reasoning\":\"why\",\"confidence\":0.9}\n" +
+                    "Example of WRONG response: Here is the information: {\"value\":...}\n\n" +
+                    "Required JSON schema:\n" +
+                    JSON.stringify(responseSchema, null, 2) +
+                    "\n\nOutput only the JSON object now:",
+                tools: [{ googleSearch: {} }]
+            }
+            : {
+                // No web search: strict JSON mode with schema enforcement
+                systemInstruction,
+                responseMimeType: "application/json",
+                responseSchema: responseSchema
+            };
+
         // Build request using correct SDK syntax - wrapped in rate limiter
         const response = await geminiQueue.add(async () => {
             console.log(`📊 Queue size: ${geminiQueue.size}, Pending: ${geminiQueue.pending}`);
+            console.log(`🔧 Mode: ${options.web ? 'Web Search (JSON soft)' : 'JSON strict'}`);
             return await ai.models.generateContent({
                 model: modelId,
                 contents: enhancedPrompt,
-                config: {
-                    systemInstruction,
-                    responseMimeType: "application/json",
-                    responseSchema: responseSchema,
-                    tools: options.web ? [{ googleSearch: {} }] : undefined
-                }
+                config
             });
         });
 
         const text = response.text || "";
         console.log("📝 Raw response:", text.substring(0, 200));
 
-        // Parse the JSON response
+        // Parse the JSON response (defensive parsing for web search mode)
         let json: any;
         try {
             let cleanedText = text.trim();
+
+            // Remove markdown code blocks
             if (cleanedText.startsWith("```")) {
                 cleanedText = cleanedText.replace(/^```json\s*/i, "").replace(/^```\s*/i, "");
                 cleanedText = cleanedText.replace(/```$/, "").trim();
             }
+
+            // In web search mode, the model might add prose around JSON
+            // Try to extract JSON object/array if needed
+            if (options.web && !cleanedText.startsWith('{') && !cleanedText.startsWith('[')) {
+                const jsonMatch = cleanedText.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+                if (jsonMatch) {
+                    cleanedText = jsonMatch[0];
+                    console.log('🔍 Extracted JSON from prose response');
+                }
+            }
+
             json = JSON.parse(cleanedText);
             console.log('📋 Parsed JSON structure:', JSON.stringify(json, null, 2));
         } catch (parseError) {
             console.warn("⚠ Failed to parse JSON, wrapping raw response");
-            return { value: text || "No response", confidence: null, sources: [] };
+            console.warn("Parse error:", parseError);
+            // Fallback: return raw text as value with default structure
+            return {
+                value: text || "No response",
+                reasoning: options.web ? "Response could not be parsed as JSON (web search mode)" : "Invalid JSON response",
+                confidence: null,
+                sources: []
+            };
         }
 
         // Extract value from JSON (handle both object with 'value' property or direct value)
