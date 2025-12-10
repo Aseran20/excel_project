@@ -262,6 +262,80 @@
                     <button id="test-backend" class="ms-Button">Test Backend API</button>
                     <div id="test-result" class="test-result"></div>
                 </div>
+
+                <!-- Queue Status Panel -->
+                <div class="debug-section">
+                    <h3 class="ms-font-m">📊 Queue Status</h3>
+
+                    <!-- Statistics Grid -->
+                    <div class="queue-stats">
+                        <div class="stat-row">
+                            <div class="stat-item">
+                                <div class="stat-label">Total</div>
+                                <div id="queue-total" class="stat-value">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">In Progress</div>
+                                <div id="queue-in-progress" class="stat-value stat-in-progress">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Completed</div>
+                                <div id="queue-completed" class="stat-value stat-success">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-item">
+                                <div class="stat-label">Failed</div>
+                                <div id="queue-failed" class="stat-value stat-error">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Queued</div>
+                                <div id="queue-queued" class="stat-value">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Speed</div>
+                                <div id="concurrency-display" class="stat-value">5</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                        <div id="progress-text" class="progress-text">0 / 0 completed (0%)</div>
+                    </div>
+
+                    <!-- Speed Control -->
+                    <div class="speed-control">
+                        <label for="concurrency-slider" class="ms-font-s">
+                            <strong>Request Speed:</strong>
+                        </label>
+                        <div class="slider-container">
+                            <span class="slider-label">Slow</span>
+                            <input type="range" id="concurrency-slider" min="1" max="10" value="5" />
+                            <span class="slider-label">Fast</span>
+                        </div>
+                        <div class="slider-value">
+                            <span id="concurrency-value">5</span> concurrent requests
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="queue-actions">
+                        <button id="retry-failed-btn" class="ms-Button ms-Button--small">🔄 Retry Failed</button>
+                        <button id="clear-completed-btn" class="ms-Button ms-Button--small">🗑️ Clear Completed</button>
+                    </div>
+
+                    <!-- Request Details (collapsible) -->
+                    <details class="queue-details-section">
+                        <summary class="ms-font-s">
+                            <strong>Request Details</strong> (<span id="details-count">0</span>)
+                        </summary>
+                        <div id="queue-details" class="queue-details-list"></div>
+                    </details>
+                </div>
             </div>
         </div>
     </main>

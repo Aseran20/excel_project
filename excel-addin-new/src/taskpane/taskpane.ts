@@ -27,6 +27,9 @@ Office.onReady(() => {
   // Initialize debug system
   initDebugSystem();
 
+  // Initialize queue management
+  initQueueManagement();
+
   // Listen for selection changes
   Excel.run(async (context) => {
     const sheet = context.workbook.worksheets.getActiveWorksheet();
@@ -401,4 +404,128 @@ function parseMarkdown(text: string): string {
   }
 
   return html;
+}
+
+// ===== QUEUE MANAGEMENT SYSTEM =====
+
+function initQueueManagement() {
+  console.log('Initializing queue management system...');
+
+  // Register global function for queue updates from queueManager
+  (window as any).updateQueueStatus = (stats: any) => {
+    updateQueueStatusUI(stats);
+  };
+
+  // Concurrency slider
+  const slider = document.getElementById('concurrency-slider') as HTMLInputElement;
+  if (slider) {
+    slider.addEventListener('input', (e) => {
+      const value = (e.target as HTMLInputElement).value;
+      const valueDisplay = document.getElementById('concurrency-value');
+      const displayValue = document.getElementById('concurrency-display');
+
+      if (valueDisplay) valueDisplay.textContent = value;
+      if (displayValue) displayValue.textContent = value;
+
+      if ((window as any).setQueueManagerConcurrency) {
+        (window as any).setQueueManagerConcurrency(parseInt(value));
+      }
+    });
+  }
+
+  // Retry failed button
+  const retryBtn = document.getElementById('retry-failed-btn');
+  if (retryBtn) {
+    retryBtn.addEventListener('click', () => {
+      if ((window as any).retryFailedRequests) {
+        (window as any).retryFailedRequests();
+        log('Retrying failed requests...', 'info');
+      }
+    });
+  }
+
+  // Clear completed button
+  const clearBtn = document.getElementById('clear-completed-btn');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if ((window as any).clearCompletedRequests) {
+        (window as any).clearCompletedRequests();
+        log('Completed requests cleared', 'info');
+      }
+    });
+  }
+
+  log('Queue management system initialized', 'success');
+}
+
+function updateQueueStatusUI(stats: any) {
+  // Update statistics
+  const elements = {
+    total: document.getElementById('queue-total'),
+    inProgress: document.getElementById('queue-in-progress'),
+    completed: document.getElementById('queue-completed'),
+    failed: document.getElementById('queue-failed'),
+    queued: document.getElementById('queue-queued'),
+  };
+
+  if (elements.total) elements.total.textContent = stats.total.toString();
+  if (elements.inProgress) elements.inProgress.textContent = stats.inProgress.toString();
+  if (elements.completed) elements.completed.textContent = stats.completed.toString();
+  if (elements.failed) elements.failed.textContent = stats.failed.toString();
+  if (elements.queued) elements.queued.textContent = stats.queued.toString();
+
+  // Update progress bar
+  const progressFill = document.getElementById('progress-fill');
+  const progressText = document.getElementById('progress-text');
+
+  if (progressFill && progressText && stats.total > 0) {
+    const completedCount = stats.completed + stats.failed;
+    const percentage = Math.round((completedCount / stats.total) * 100);
+    progressFill.style.width = `${percentage}%`;
+    progressText.textContent = `${completedCount} / ${stats.total} completed (${percentage}%)`;
+  } else if (progressFill && progressText) {
+    progressFill.style.width = '0%';
+    progressText.textContent = '0 / 0 completed (0%)';
+  }
+
+  // Update request details list
+  const detailsDiv = document.getElementById('queue-details');
+  const detailsCount = document.getElementById('details-count');
+
+  if (detailsDiv && detailsCount) {
+    detailsCount.textContent = stats.requests.length.toString();
+
+    if (stats.requests.length === 0) {
+      detailsDiv.innerHTML = '<p style="color: #605e5c; font-size: 12px; padding: 10px; text-align: center;">No requests in queue</p>';
+    } else {
+      detailsDiv.innerHTML = stats.requests
+        .slice(0, 100)  // Last 100 requests
+        .map((req: any) => {
+          const statusIcon = {
+            queued: '⏳',
+            'in-progress': '⚡',
+            completed: '✅',
+            failed: '❌'
+          }[req.status] || '❓';
+
+          const statusClass = req.status.replace('-', '_');
+
+          return `
+            <div class="queue-item queue-item-${statusClass}">
+              <div class="queue-item-header">
+                <span class="status-icon">${statusIcon}</span>
+                <span class="cell-address">${req.cellAddress}</span>
+                <span class="status-badge">${req.status}</span>
+              </div>
+              <div class="queue-item-body">
+                <div class="prompt-preview">${req.prompt.substring(0, 60)}${req.prompt.length > 60 ? '...' : ''}</div>
+                ${req.duration ? `<div class="duration">⏱️ ${req.duration}ms ${req.cacheHit ? '⚡ cached' : ''}</div>` : ''}
+                ${req.error ? `<div class="error-message">❌ ${req.error}</div>` : ''}
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+  }
 }

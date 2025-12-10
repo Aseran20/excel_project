@@ -3,6 +3,8 @@
  * See LICENSE in the project root for license information.
  */
 
+import { queueManager } from '../utils/queueManager';
+
 /**
  * Calls the AlgoSheet backend.
  * @customfunction
@@ -10,95 +12,70 @@
  * @param responseMode The response mode ("free" or "structured").
  * @param schema The schema for structured response.
  * @param options Additional options (key=value;...).
+ * @param invocation Invocation context
+ * @requiresAddress
  * @returns The JSON response from the backend.
  */
 export async function ALGOSHEET(
   prompt: string,
   responseMode: string = "free",
   schema: string = "",
-  options: string = ""
+  options: string = "",
+  invocation: CustomFunctions.Invocation
 ): Promise<string> {
-  // Backend URL injected by Webpack
-  // @ts-ignore
-  const backendUrl = process.env.BACKEND_URL || "https://algosheet.auraia.ch/api/algosheet";
-
-  const startTime = Date.now();
-
   // Try to log to debug panel if available
   const debugLog = (window as any).debugLog;
   const addRequestHistory = (window as any).addRequestHistory;
 
-  if (debugLog) {
-    debugLog(`ALGOSHEET called: "${prompt.substring(0, 40)}${prompt.length > 40 ? '...' : ''}"`, 'info');
-  }
-
   try {
-    const response = await fetch(backendUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt,
-        responseMode,
-        schema,
-        options,
-      }),
-    });
-
-    const duration = Date.now() - startTime;
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      const errorMsg = `ALGOSHEET_ERROR: ${response.status} ${response.statusText} - ${errorText}`;
-
-      if (debugLog) debugLog(`Request failed: ${response.status}`, 'error');
-      if (addRequestHistory) {
-        addRequestHistory({
-          timestamp: new Date(),
-          prompt: prompt, // Full prompt
-          duration,
-          cached: false,
-          success: false,
-          error: `${response.status} ${response.statusText}`
-        });
-      }
-
-      return errorMsg;
-    }
-
-    const json = await response.json();
-    console.log("ALGOSHEET response (full):", JSON.stringify(json, null, 2));
-
-    // Detect if response was cached (very fast response = cache hit)
-    const wasCached = duration < 500;
+    // Get cell address (with fallback if @requiresAddress doesn't work)
+    const cellAddress = invocation.address ||
+                       (invocation as any).parameterAddresses?.[0]?.[0] ||
+                       `Cell-${Date.now()}`;
 
     if (debugLog) {
-      debugLog(`Request completed in ${duration}ms ${wasCached ? '(cached)' : ''}`, 'success');
+      debugLog(`ALGOSHEET at ${cellAddress}: "${prompt.substring(0, 40)}${prompt.length > 40 ? '...' : ''}"`, 'info');
     }
 
+    // Enqueue request through queue manager
+    const result = await queueManager.enqueue({
+      cellAddress,
+      prompt,
+      responseMode,
+      schema,
+      options
+    });
+
+    console.log("ALGOSHEET response (full):", JSON.stringify(result, null, 2));
+
+    // Add to request history
     if (addRequestHistory) {
       addRequestHistory({
         timestamp: new Date(),
-        prompt: prompt, // Full prompt
-        duration,
-        cached: wasCached,
+        prompt: prompt,
+        duration: result._duration || 0,
+        cached: result._cached || false,
         success: true,
-        response: json // Pass full response
+        response: result
       });
     }
 
-    return JSON.stringify(json);
+    if (debugLog) {
+      debugLog(`Request completed in ${result._duration || 0}ms ${result._cached ? '(cached)' : ''}`, 'success');
+    }
+
+    return JSON.stringify(result);
+
   } catch (error: any) {
-    const duration = Date.now() - startTime;
     console.error("ALGOSHEET error:", error);
 
     if (debugLog) debugLog(`Request error: ${error.message}`, 'error');
+
     if (addRequestHistory) {
       addRequestHistory({
         timestamp: new Date(),
-        prompt: prompt, // Full prompt
-        duration,
+        prompt: prompt,
+        duration: 0,
         cached: false,
         success: false,
         error: error.message
@@ -160,4 +137,23 @@ export function ALGOSHEET_PARSE(jsonText: string, field: string): any {
     console.error("ALGOSHEET_PARSE error:", e);
     return "#PARSE_ERROR";
   }
+}
+
+// ===== EXPOSE QUEUE MANAGER CONTROLS TO TASK PANE =====
+// This allows the task pane (via SharedRuntime) to control the queue manager
+
+if (typeof window !== 'undefined') {
+  (window as any).setQueueManagerConcurrency = (value: number) => {
+    queueManager.setMaxConcurrency(value);
+  };
+
+  (window as any).retryFailedRequests = () => {
+    queueManager.retryFailed();
+  };
+
+  (window as any).clearCompletedRequests = () => {
+    queueManager.clearCompleted();
+  };
+
+  console.log('[Functions] Queue manager controls exposed to window');
 }

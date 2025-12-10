@@ -4,12 +4,12 @@
     "private": true,
     "workspaces": [
         "backend",
-        "excel-addin"
+        "excel-addin-new"
     ],
     "scripts": {
         "build": "npm run build --workspaces",
-        "start:backend": "npm run start --workspace=algosheet-backend",
-        "start:addin": "npm run start --workspace=algosheet-addin"
+        "start:backend": "npm run start --workspace=backend",
+        "start:addin": "npm run start --workspace=excel-addin-new"
     },
     "devDependencies": {
         "typescript": "^5.0.0",
