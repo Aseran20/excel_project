@@ -1,0 +1,120 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  },
+  "files": {
+    "ignore": [
+      "node_modules",
+      "dist",
+      "build",
+      "lib",
+      "lib-amd",
+      "coverage",
+      ".vscode",
+      ".git",
+      "*.tsbuildinfo",
+      "apps/frontend/assets/**",
+      "apps/frontend/manifest*.xml",
+      "apps/backend/data/**",
+      "data/**",
+      ".archive/**",
+      "*.pem",
+      "*.crt",
+      "*.key"
+    ],
+    "include": [
+      "apps/**/*.ts",
+      "apps/**/*.js",
+      "packages/**/*.ts",
+      "packages/**/*.js",
+      "scripts/**/*.ts",
+      "scripts/**/*.js"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 120
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noConsoleLog": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "warn",
+        "useConst": "error",
+        "useTemplate": "warn"
+      },
+      "complexity": {
+        "noForEach": "off",
+        "useLiteralKeys": "warn"
+      },
+      "correctness": {
+        "noUnusedVariables": "error",
+        "noUndeclaredVariables": "error"
+      },
+      "performance": {
+        "noDelete": "warn"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "es5",
+      "arrowParentheses": "always",
+      "bracketSpacing": true,
+      "quoteProperties": "asNeeded"
+    },
+    "globals": []
+  },
+  "overrides": [
+    {
+      "include": ["apps/frontend/**/*.ts", "apps/frontend/**/*.js"],
+      "javascript": {
+        "globals": ["Office", "Excel", "window", "document", "console", "navigator", "process"]
+      },
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
+          },
+          "style": {
+            "noVar": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["apps/backend/**/*.ts"],
+      "javascript": {
+        "globals": ["process", "console", "__dirname", "__filename"]
+      }
+    },
+    {
+      "include": ["**/*.config.js", "webpack.config.js", "babel.config.json"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,18 +1,29 @@
 {
-    "name": "algosheet",
-    "version": "1.0.0",
-    "private": true,
-    "workspaces": [
-        "backend",
-        "excel-addin-new"
-    ],
-    "scripts": {
-        "build": "npm run build --workspaces",
-        "start:backend": "npm run start --workspace=backend",
-        "start:addin": "npm run start --workspace=excel-addin-new"
-    },
-    "devDependencies": {
-        "typescript": "^5.0.0",
-        "@types/node": "^20.0.0"
-    }
+  "name": "algosheet-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "build:shared": "npm run build --workspace=@algosheet/shared",
+    "start:backend": "npm run start --workspace=@algosheet/backend",
+    "start:frontend": "npm run start --workspace=@algosheet/frontend",
+    "dev": "npm run dev --workspaces --if-present",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "lint:ci": "biome ci .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^20.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "typescript": "^5.0.0"
+  }
 }

@@ -22,7 +22,7 @@
 | Feature | Status | Date | Notes |
 |---------|--------|------|-------|
 | API Gemini intégration | ✅ | Nov 2024 | gemini-2.5-flash |
-| Cache SQLite (7 jours) | ✅ | Nov 2024 | Performances optimisées |
+| Cache SQLite (30 jours) | ✅ | 10 Déc 2024 | Extended retention + Litestream |
 | Rate limiting (50/min) | ✅ | Nov 2024 | p-queue (5 concurrent) |
 | Web search support | ✅ | Déc 2024 | Google Search integration |
 | Two-branch config | ✅ | 09 Déc 2024 | Web search + JSON fix |
@@ -53,6 +53,19 @@
 | Archive excel-addin | ✅ | 10 Déc 2024 | Déplacé vers .archive/ |
 | Scripts organisés | ✅ | 10 Déc 2024 | 7 scripts dans scripts/ |
 | Docs centralisées | ✅ | 10 Déc 2024 | 5 docs dans docs/ |
+
+### 🏗️ Architecture Migration (Phase 1-2)
+
+| Tâche | Status | Date | Notes |
+|-------|--------|------|-------|
+| Monorepo NPM Workspaces | ✅ | 10 Déc 2024 | apps/* + packages/* |
+| @algosheet/shared package | ✅ | 10 Déc 2024 | Types + utils centralisés |
+| TypeScript project references | ✅ | 10 Déc 2024 | tsconfig.json racine |
+| Backend migration | ✅ | 10 Déc 2024 | backend → apps/backend |
+| Frontend migration | ✅ | 10 Déc 2024 | excel-addin-new → apps/frontend |
+| Cache retention 30 jours | ✅ | 10 Déc 2024 | SQLite 7d → 30d |
+| Zod env validation | ✅ | 10 Déc 2024 | Runtime validation .env |
+| Litestream config | ✅ | 10 Déc 2024 | S3 backup (Cloudflare R2) |
 
 ---
 

@@ -1,0 +1,68 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Dependencies
+**/node_modules
+# **/package-lock.json - NEEDED for npm ci
+**/npm-debug.log
+
+# Build outputs
+**/dist
+**/*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Database files
+**/*.db
+**/*.db-shm
+**/*.db-wal
+
+# Development files
+**/*.test.ts
+**/*.test.js
+**/test/
+**/coverage/
+**/.nyc_output
+
+# IDE files
+.vscode
+.idea
+**/*.swp
+**/*.swo
+**/*~
+
+# OS files
+.DS_Store
+**/Thumbs.db
+
+# Logs
+**/logs
+**/*.log
+
+# Docker files
+docker-compose*.yml
+**/Dockerfile
+**/.dockerignore
+
+# Documentation
+**/README*.md
+docs/
+_archive/
+
+# Temporary files
+**/tmp/
+**/temp/
+
+# Office Add-in development
+**/certs/
+**/*.pfx
+**/*.pem
+
+# CI/CD
+.github/
+.azure-devops/

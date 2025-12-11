@@ -1,5 +1,0 @@
-- Gérer les erreurs quand certains run ne marchent pas sur excel avec algosheets (quand je lance beaucoup de cells, c'est dure actuellement d'aller repérer ou y'a des erreurs)
-- Systeme dans le front qui montre la queue en temps réel
-- Clean le folder de code ou mieux reclasser surtout le main branch pour moi visuellement
-- Quand jen lance beaucoup, y'en a qui reste en busy pendant beaucoup de min, mais quand je relance, ca fait cache hit et ca fonctionne bien
-- Mieux manager quand j'ai beaucoup de cells a générer (ex buyers list = 170 acheteurs x 7 colonnes)
